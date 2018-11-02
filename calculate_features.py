@@ -2,8 +2,8 @@ from abazeedomics_access import listdir_nohidden
 import os
 import pandas as pd
 import numpy as np
-from data import data, data_dict
-import pandas_profiling
+# from data import data, data_dict
+# import pandas_profiling
 from radiomics import featureextractor
 import sys
 
@@ -21,20 +21,20 @@ def calculate_features(dir_of_patient_dirs = '/Volumes/AbazeedOmics/Shared_HPC/d
 
     for patient in list_of_patients_to_study:
         structure_name = chosen_structure_sheet.loc[patient, 'chosen_structure']
-        #try radiomics.extractdir_of_patient_folders + patient + '/' + structure_name)
-        maskName = dir_of_patient_dirs + patient + '/structures/' + structure_name
-        imageName = dir_of_patient_dirs + patient + '/images.nrrd'
-        try :
+        try: #  radiomics.extractdir_of_patient_folders + patient + '/' + structure_name)
+            maskName = dir_of_patient_dirs + patient + '/structures/' + structure_name
+            imageName = dir_of_patient_dirs + patient + '/images.nrrd'
+        
             featureVector = extractor.execute(imageName, maskName)
-            patient_to_featureVector[patient] = featureVector
+            patient_to_features[patient] = featureVector
             count = count + 1
             print(patient + ' calculated  ' + str(count) + ' out of ' + str(len(list_of_patients_to_study)))
         except :
-            patients_attempted_failed.append(patient)
-            count = count + 1
-            print(patient + ' failed')
-            print(patient + ' calculated  ' + str(count) + ' out of ' + str(len(list_of_patients_to_study)))
-            continue
+           patients_attempted_failed.append(patient)
+           count = count + 1
+           print(patient + ' failed')
+           # print(patient + ' calculated  ' + str(count) + ' out of ' + str(len(list_of_patients_to_study)))
+           continue
 
 if __name__ == '__main__':
     print(sys.argv[0])
