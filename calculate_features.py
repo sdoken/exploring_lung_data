@@ -18,6 +18,8 @@ def calculate_features(dir_of_patient_dirs = '/Volumes/AbazeedOmics/Shared_HPC/d
     chosen_structure_sheet.set_index('anon_id', inplace=True)
     patients_attempted_failed = []
     count = 0
+    data = []
+    featured_patients = []
 
     for patient in list_of_patients_to_study:
         structure_name = chosen_structure_sheet.loc[patient, 'chosen_structure']
@@ -29,6 +31,10 @@ def calculate_features(dir_of_patient_dirs = '/Volumes/AbazeedOmics/Shared_HPC/d
             patient_to_features[patient] = featureVector
             count = count + 1
             print(patient + ' calculated  ' + str(count) + ' out of ' + str(len(list_of_patients_to_study)))
+            data.append(list(featureVector.values()))
+            featured_patients.append(patient)
+
+
         except :
            patients_attempted_failed.append(patient)
            count = count + 1
@@ -36,6 +42,12 @@ def calculate_features(dir_of_patient_dirs = '/Volumes/AbazeedOmics/Shared_HPC/d
            # print(patient + ' calculated  ' + str(count) + ' out of ' + str(len(list_of_patients_to_study)))
            continue
 
+    features_df = pd.DataFrame( data, columns = list(featureVector.keys()), index = featured_patients)
+      
+    return features_df
+
+
 if __name__ == '__main__':
     print(sys.argv[0])
-    calculate_features(sys.argv[1], sys.argv[2])
+    features_df = calculate_features(sys.argv[1], sys.argv[2])
+    features_df.to_csv('results_4_with_names.csv')
